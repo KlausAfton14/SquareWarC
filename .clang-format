@@ -1,0 +1,22 @@
+Language: C
+BasedOnStyle: LLVM
+
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+BreakBeforeBraces: Allman
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+
+ColumnLimit: 0
+
+PointerAlignment: Left
+SpaceAfterCStyleCast: true
+
+SortIncludes: false
+
+AlignAfterOpenBracket: Align
+BinPackArguments: false
+BinPackParameters: false
