@@ -1,0 +1,77 @@
+[
+  {
+    "file": "src/collisions.c",
+    "arguments": [
+      "gcc",
+      "-Wall",
+      "-Wextra",
+      "-std=c99",
+      "-Iinclude",
+      "src/collisions.c",
+      "-o",
+      "bin/gierka"
+    ],
+    "directory": "/home/klaus/Coding/giera_c",
+    "output": "bin/gierka"
+  },
+  {
+    "file": "src/entity.c",
+    "arguments": [
+      "gcc",
+      "-Wall",
+      "-Wextra",
+      "-std=c99",
+      "-Iinclude",
+      "src/entity.c",
+      "-o",
+      "bin/gierka"
+    ],
+    "directory": "/home/klaus/Coding/giera_c",
+    "output": "bin/gierka"
+  },
+  {
+    "file": "src/game.c",
+    "arguments": [
+      "gcc",
+      "-Wall",
+      "-Wextra",
+      "-std=c99",
+      "-Iinclude",
+      "src/game.c",
+      "-o",
+      "bin/gierka"
+    ],
+    "directory": "/home/klaus/Coding/giera_c",
+    "output": "bin/gierka"
+  },
+  {
+    "file": "src/player.c",
+    "arguments": [
+      "gcc",
+      "-Wall",
+      "-Wextra",
+      "-std=c99",
+      "-Iinclude",
+      "src/player.c",
+      "-o",
+      "bin/gierka"
+    ],
+    "directory": "/home/klaus/Coding/giera_c",
+    "output": "bin/gierka"
+  },
+  {
+    "file": "src/projectile.c",
+    "arguments": [
+      "gcc",
+      "-Wall",
+      "-Wextra",
+      "-std=c99",
+      "-Iinclude",
+      "src/projectile.c",
+      "-o",
+      "bin/gierka"
+    ],
+    "directory": "/home/klaus/Coding/giera_c",
+    "output": "bin/gierka"
+  }
+]

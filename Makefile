@@ -1,8 +1,8 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c99
+CFLAGS = -Wall -Wextra -std=c99 -Iinclude
 LDFLAGS = -lSDL2 -lm
 
-SRC = main.c
+SRC = $(wildcard src/*.c)
 BIN = bin/gierka
 
 all: format build run
