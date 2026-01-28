@@ -1,10 +1,8 @@
-#include <SDL2/SDL_rect.h>
-#include <SDL2/SDL_surface.h>
-#include <SDL2/SDL_timer.h>
-#include <SDL2/SDL_video.h>
 #include <stdio.h>
-#include "stdbool.h"
-#include "SDL2/SDL.h"
+#include <math.h>
+#include <stdbool.h>
+#include <SDL2/SDL.h>
+#include <stdlib.h>
 
 #define WINDOW_TITLE "SquareWar"
 #define WINDOW_WIDTH 901
@@ -13,72 +11,144 @@
 #define BACKGROUND_COLOR 0x00141414
 
 #define PLAYER_SIZE 50
-#define ENTITIE_SIZE 20
+#define ENTITY_SIZE 20
 
-struct Player
-{
-    int x;
-    int y;
+typedef struct {
+    float x;
+    float y;
     int size;
     int health;
     int ammo;
-};
+} Player;
 
-struct Entitie
-{   
-    int x;
-    int y;
+typedef struct {   
+    float x;
+    float y;
     int size;
     int health;
-};
+} Entity;
 
-struct Projectile
-{
-    int x;
-    int y;
+typedef struct {
+    float x;
+    float y;
     int size;
     int damage;
-    int angle;
-};
+    float velX; 
+    float velY;
+} Projectile;
 
-struct Player spawn_player(int x, int y)
+typedef struct {
+    Entity *data;
+    size_t count;
+    size_t capacity;
+} EntityArray;
+
+typedef struct {
+    Projectile *data;
+    size_t count;
+    size_t capacity;
+} ProjectileArray;
+
+void initEntities(EntityArray *arr)
 {
-    struct Player player = {
+    arr->data = NULL;
+    arr->count = 0;
+    arr->capacity = 0;
+}
+
+void initProjectiles(ProjectileArray *arr)
+{
+    arr->data = NULL;
+    arr->count = 0;
+    arr->capacity = 0;
+}
+
+Player spawnPlayer(int x, int y)
+{
+    Player player = {
         x - (PLAYER_SIZE / 2),
         y - (PLAYER_SIZE / 2),
         PLAYER_SIZE,
         100,
         25
     };
-
     return player;
-};
+}
 
-struct Entitie spawn_entitie(int x, int y)
+Entity spawnEntity(int x, int y)
 {
-    struct Entitie entitie = {
-        x - (ENTITIE_SIZE / 2),
-        y - (ENTITIE_SIZE / 2),
-        ENTITIE_SIZE,
+    Entity entity = {
+        x - (ENTITY_SIZE / 2),
+        y - (ENTITY_SIZE / 2),
+        ENTITY_SIZE,
         50
     };
+    return entity;
+}
 
-    return entitie;
-};
-
-struct Projectile spawn_projectile(struct Player player, int size, int target_x, int target_y)
+Projectile spawnProjectile(Player player, int size, int targetX, int targetY)
 {
-    struct Projectile projectile = {
-        player.x - (size / 2),
-        player.y - (size / 2),
+
+    float dx = targetX - player.x;
+    float dy = targetY - player.y;
+
+    float length = sqrtf(dx * dx + dy * dy);
+    if(length == 0) length = 1;
+
+    float speed = 2.0f;
+
+    Projectile projectile = {
+        player.x + player.size / 2.0f,
+        player.y + player.size / 2.0f,
         size,
-        50
+        50,
+        (dx / length) * speed,
+        (dy / length) * speed
     };
-
     return projectile;
-};
+}
 
-void draw_player(SDL_Surface *surface, struct Player player)
+void addEntity(EntityArray *arr, Entity e)
+{
+    if(arr->count == arr->capacity)
+    {
+        size_t new_cap = arr->capacity == 0 ? 4 : arr->capacity * 2;
+        Entity *tmp = realloc(arr->data, new_cap * sizeof *tmp);
+
+        if(!tmp)
+        {
+            perror("realloc");
+            exit(1);
+        }
+
+        arr->data = tmp;
+        arr->capacity = new_cap;
+    }
+
+    arr->data[arr->count++] = e;
+}
+
+void addProjectile(ProjectileArray *arr, Projectile p)
+{
+    if(arr->count == arr->capacity)
+    {
+        size_t new_cap = arr->capacity == 0 ? 4 : arr->capacity * 2;
+        Projectile *tmp = realloc(arr->data, new_cap * sizeof *tmp);
+
+        if(!tmp)
+        {
+            perror("realloc");
+            exit(1);
+        }
+
+        arr->data = tmp;
+        arr->capacity = new_cap;
+    }
+
+    arr->data[arr->count++] = p;
+}
+
+void drawPlayer(SDL_Surface *surface, Player player)
 {
     SDL_Rect playerRect = {
         player.x,
@@ -86,36 +156,31 @@ void draw_player(SDL_Surface *surface, struct Player player)
         player.size,
         player.size
     };
-
     SDL_FillRect(surface, &playerRect, 0x000000ff);
 }
 
-void draw_entities(SDL_Surface *surface, struct Entitie *entities, int entitiesCount)
+void drawEntities(SDL_Surface *surface, Entity *entities, int entityCount)
 {
-    for(int i; i < entitiesCount; i++)
-    {
-        SDL_Rect entitieRect = {
+    for (int i = 0; i < entityCount; i++) {
+        SDL_Rect entityRect = {
             entities[i].x,
             entities[i].y,
             entities[i].size,
             entities[i].size
         };
-
-        SDL_FillRect(surface, &entitieRect, 0x00ff0000);
+        SDL_FillRect(surface, &entityRect, 0x00ff0000);
     }
 }
 
-void draw_projectiles(SDL_Surface *surface, struct Projectile *projectiles, int projectilesCount)
+void drawProjectiles(SDL_Surface *surface, Projectile *projectiles, int projectileCount)
 {
-    for(int i; i < projectilesCount; i++)
-    {
+    for (int i = 0; i < projectileCount; i++) {
         SDL_Rect projectileRect = {
             projectiles[i].x,
             projectiles[i].y,
             projectiles[i].size,
             projectiles[i].size
         };
-
         SDL_FillRect(surface, &projectileRect, 0x0000ff00);
     }
 }
@@ -136,61 +201,82 @@ int main(int argc, char *argv[])
     );
 
     SDL_Surface *surface = SDL_GetWindowSurface(window);
-    SDL_Rect windowRect = {
-        0,
-        0,
-        WINDOW_WIDTH,
-        WINDOW_HEIGHT
-    };
+    SDL_Rect windowRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
     SDL_FillRect(surface, &windowRect, BACKGROUND_COLOR);
 
-    float frameDelay = (1.0 / TARGET_FPS) * 1000;
-    int mouse_x;
-    int mouse_y;
+    float frameDelay = (1.0f / TARGET_FPS) * 1000;
+    int mouseX;
+    int mouseY;
 
-    int stratingX = (int)(WINDOW_WIDTH / 2); 
-    int stratingY = (int)(WINDOW_HEIGHT / 2); 
+    int startingX = WINDOW_WIDTH / 2;
+    int startingY = WINDOW_HEIGHT / 2;
 
-    struct Player player_1 = spawn_player(stratingX, stratingY);
-    struct Entitie entitie_1 = spawn_entitie(20, 20);
-    struct Entitie entitie_2 = spawn_entitie(600, 500);
+    Player player = spawnPlayer(startingX, startingY);
 
-    struct Entitie entities[] = {
-        entitie_1,
-        entitie_2
-    };
+    Entity entity1 = spawnEntity(20, 20);
+    Entity entity2 = spawnEntity(600, 500);
 
-    int entitiesCount = (sizeof(entities) / sizeof(*entities));
+    Projectile projectile1 = spawnProjectile(player, 10, 500, 500);
+    Projectile projectile2 = spawnProjectile(player, 10, 200, 200);
 
-    while(!done)
-    {
+    EntityArray entities;
+    initEntities(&entities);
+
+    addEntity(&entities, entity1);
+    addEntity(&entities, entity2);
+
+    ProjectileArray projectiles;
+    initProjectiles(&projectiles);
+
+    addProjectile(&projectiles, projectile1);
+    addProjectile(&projectiles, projectile2);
+
+
+    while (!done) {
+        SDL_FillRect(surface, &windowRect, BACKGROUND_COLOR);
         SDL_Event event;
-        while(SDL_PollEvent(&event))
-        {
-            switch(event.type)
-            {
+        while (SDL_PollEvent(&event)) {
+            switch (event.type) {
                 case SDL_QUIT:
                     done = true;
                     break;
                 case SDL_MOUSEMOTION:
-                    mouse_x = event.motion.x;
-                    mouse_y = event.motion.y;
-                    printf("x: %d, y: %d\n", mouse_x, mouse_y);
+                    mouseX = event.motion.x;
+                    mouseY = event.motion.y;
+                    break;
+                case SDL_MOUSEBUTTONDOWN:
+                    mouseX = event.motion.x;
+                    mouseY = event.motion.y;
+                    Projectile projectile = spawnProjectile(player, 10, mouseX, mouseY);
+                    addProjectile(&projectiles, projectile);
                     break;
             }
         }
 
-        draw_entities(surface, entities, entitiesCount);
-        draw_player(surface, player_1);
+        for(int i = 0; i < projectiles.count; i++)
+        {
+            if (projectiles.data[i].x < WINDOW_WIDTH && projectiles.data[i].x > 0) 
+            {
+                projectiles.data[i].x += projectiles.data[i].velX;
+            }
+
+            if (projectiles.data[i].y < WINDOW_HEIGHT && projectiles.data[i].y > 0) 
+            {
+                projectiles.data[i].y += projectiles.data[i].velY;
+            }    
+        }
+
+        printf("x: %d, y: %d, c: %d\n", projectiles.data[0].x, projectiles.data[0].y, (int)projectiles.count);
+
+        drawEntities(surface, entities.data, entities.count);
+        drawProjectiles(surface, projectiles.data, projectiles.count);
+        drawPlayer(surface, player);
 
         SDL_UpdateWindowSurface(window);
         SDL_Delay((int)frameDelay);
     }
-    
+
     SDL_DestroyWindow(window);
     SDL_Quit();
     return 0;
 }
-
-
-// projectile system !!!
