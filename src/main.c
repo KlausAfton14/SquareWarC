@@ -1,9 +1,4 @@
-#include <SDL2/SDL_mouse.h>
-#include <SDL2/SDL_surface.h>
-#include <SDL2/SDL_video.h>
-#include <stddef.h>
-#include <stdbool.h>
-#include <SDL2/SDL.h>
+#define SDL_MAIN_HANDLED
 
 #include "config.h"
 #include "platform.h"
@@ -14,7 +9,11 @@
 #include "entity.h"
 #include "projectile.h"
 
-int main(int argc, char* argv[])
+#include <stddef.h>
+#include <stdbool.h>
+#include <SDL2/SDL.h>
+
+int main()
 {
     SDL_Window* window;
     SDL_Surface* surface;

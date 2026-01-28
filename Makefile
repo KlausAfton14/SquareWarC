@@ -1,21 +1,47 @@
+# ======================
+# COMMON
+# ======================
+SRC = $(wildcard src/*.c)
+BIN_DIR = bin
+
+# ======================
+# LINUX
+# ======================
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99 -Iinclude
 LDFLAGS = -lSDL2 -lm
 
-SRC = $(wildcard src/*.c)
-BIN = bin/gierka
+BIN = $(BIN_DIR)/gierka
 
-all: format build run
+# ======================
+# WINDOWS (MinGW)
+# ======================
+WIN_CC = x86_64-w64-mingw32-gcc
+WIN_CFLAGS = -Wall -Wextra -std=c99 -Iinclude \
+             -I/usr/x86_64-w64-mingw32/include
+WIN_LDFLAGS = -L/usr/x86_64-w64-mingw32/lib \
+              -lSDL2 -lm
+
+WIN_BIN = $(BIN_DIR)/SquareWar.exe
+
+# ======================
+# TARGETS
+# ======================
+all: format build
 
 format:
 	clang-format -i $(SRC)
 
 build:
-	mkdir -p bin
+	mkdir -p $(BIN_DIR)
 	$(CC) $(CFLAGS) $(SRC) -o $(BIN) $(LDFLAGS)
+
+win:
+	mkdir -p $(BIN_DIR)
+	$(WIN_CC) $(WIN_CFLAGS) $(SRC) -o $(WIN_BIN) $(WIN_LDFLAGS)
 
 run:
 	./$(BIN)
 
 clean:
-	rm -rf bin
+	rm -rf $(BIN_DIR)
