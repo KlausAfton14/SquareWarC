@@ -66,8 +66,8 @@ void initProjectiles(ProjectileArray *arr)
 Player spawnPlayer(int x, int y)
 {
     Player player = {
-        x - (PLAYER_SIZE / 2),
-        y - (PLAYER_SIZE / 2),
+        x,
+        y,
         PLAYER_SIZE,
         100,
         25
@@ -78,8 +78,8 @@ Player spawnPlayer(int x, int y)
 Entity spawnEntity(int x, int y)
 {
     Entity entity = {
-        x - (ENTITY_SIZE / 2),
-        y - (ENTITY_SIZE / 2),
+        x,
+        y,
         ENTITY_SIZE,
         50
     };
@@ -98,8 +98,8 @@ Projectile spawnProjectile(Player player, int size, int targetX, int targetY)
     float speed = 2.0f;
 
     Projectile projectile = {
-        player.x + player.size / 2.0f,
-        player.y + player.size / 2.0f,
+        player.x,
+        player.y,
         size,
         50,
         (dx / length) * speed,
@@ -148,11 +148,25 @@ void addProjectile(ProjectileArray *arr, Projectile p)
     arr->data[arr->count++] = p;
 }
 
+void removeEntity(EntityArray *arr, int index)
+{
+    if (index < 0 || index >= arr->count) return;
+    arr->data[index] = arr->data[arr->count - 1];
+    arr->count--;
+}
+
+void removeProjectile(ProjectileArray *arr, int index)
+{
+    if (index < 0 || index >= arr->count) return;
+    arr->data[index] = arr->data[arr->count - 1];
+    arr->count--;
+}
+
 void drawPlayer(SDL_Surface *surface, Player player)
 {
     SDL_Rect playerRect = {
-        player.x,
-        player.y,
+        (int) (player.x - player.size / 2.0f),
+        (int) (player.y - player.size / 2.0f),
         player.size,
         player.size
     };
@@ -163,8 +177,8 @@ void drawEntities(SDL_Surface *surface, Entity *entities, int entityCount)
 {
     for (int i = 0; i < entityCount; i++) {
         SDL_Rect entityRect = {
-            entities[i].x,
-            entities[i].y,
+            (int) (entities[i].x - entities[i].size / 2.0f),
+            (int) (entities[i].y - entities[i].size / 2.0f),
             entities[i].size,
             entities[i].size
         };
@@ -176,8 +190,8 @@ void drawProjectiles(SDL_Surface *surface, Projectile *projectiles, int projecti
 {
     for (int i = 0; i < projectileCount; i++) {
         SDL_Rect projectileRect = {
-            projectiles[i].x,
-            projectiles[i].y,
+            (int) (projectiles[i].x - projectiles[i].size / 2.0f),
+            (int) (projectiles[i].y - projectiles[i].size / 2.0f),
             projectiles[i].size,
             projectiles[i].size
         };
@@ -247,26 +261,34 @@ int main(int argc, char *argv[])
                 case SDL_MOUSEBUTTONDOWN:
                     mouseX = event.motion.x;
                     mouseY = event.motion.y;
-                    Projectile projectile = spawnProjectile(player, 10, mouseX, mouseY);
+                    Projectile projectile = spawnProjectile(player, 15, mouseX, mouseY);
                     addProjectile(&projectiles, projectile);
                     break;
             }
         }
 
-        for(int i = 0; i < projectiles.count; i++)
+        for(int i = 0; i < projectiles.count;)
         {
-            if (projectiles.data[i].x < WINDOW_WIDTH && projectiles.data[i].x > 0) 
+            if (
+                projectiles.data[i].x < 0 || 
+                projectiles.data[i].y < 0 || 
+                projectiles.data[i].x > WINDOW_WIDTH || 
+                projectiles.data[i].y > WINDOW_HEIGHT)
             {
-                projectiles.data[i].x += projectiles.data[i].velX;
+                removeProjectile(&projectiles, i);
+                continue;
             }
+            
+            projectiles.data[i].x += projectiles.data[i].velX;
+            projectiles.data[i].y += projectiles.data[i].velY;
 
-            if (projectiles.data[i].y < WINDOW_HEIGHT && projectiles.data[i].y > 0) 
-            {
-                projectiles.data[i].y += projectiles.data[i].velY;
-            }    
+            printf("x: %d, y: %d, c: %d\n", 
+                (int)projectiles.data[i].x, 
+                (int)projectiles.data[i].y, 
+                (int)projectiles.count);
+
+            i++;
         }
-
-        printf("x: %d, y: %d, c: %d\n", projectiles.data[0].x, projectiles.data[0].y, (int)projectiles.count);
 
         drawEntities(surface, entities.data, entities.count);
         drawProjectiles(surface, projectiles.data, projectiles.count);
