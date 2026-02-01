@@ -8,7 +8,7 @@ void initProjectiles(ProjectileArray* arr)
     arr->capacity = 0;
 }
 
-Projectile spawnProjectile(Player player, int size, int targetX, int targetY)
+Projectile spawnProjectile(Player player, int size, int damage, int targetX, int targetY)
 {
 
     float dx = targetX - player.x;
@@ -18,13 +18,13 @@ Projectile spawnProjectile(Player player, int size, int targetX, int targetY)
     if (length == 0)
         length = 1;
 
-    float speed = 2.0f;
+    float speed = 5.0f;
 
     Projectile projectile = {
         .x = player.x,
         .y = player.y,
         .size = size,
-        .damage = 50,
+        .damage = damage,
         .velX = (dx / length) * speed,
         .velY = (dy / length) * speed,
         .hitbox = {0}};

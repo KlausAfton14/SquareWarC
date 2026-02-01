@@ -33,7 +33,7 @@ int main()
     while (running)
     {
         handeEvents(&running, &player, &entities, &projectiles);
-        updateGame(&entities, &projectiles);
+        updateGame(&player, &entities, &projectiles);
         renderGame(surface, window, &player, &entities, &projectiles);
         SDL_Delay((int) frameDelay);
     }

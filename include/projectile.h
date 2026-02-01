@@ -26,7 +26,7 @@ typedef struct
 
 
 void initProjectiles(ProjectileArray* arr);
-Projectile spawnProjectile(Player player, int size, int targetX, int targetY);
+Projectile spawnProjectile(Player player, int size, int damage, int targetX, int targetY);
 void addProjectile(ProjectileArray* arr, Projectile p);
 void removeProjectile(ProjectileArray* arr, size_t index); // Removes projectile by swapping with last element (order not preserved)
 void updateProjectileHitbox(Projectile* projectile);

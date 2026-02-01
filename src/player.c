@@ -1,12 +1,12 @@
 #include "player.h"
 
-Player spawnPlayer(int x, int y, int size)
+Player spawnPlayer(int x, int y, int size, int health)
 {
     Player player = {
         .x = x,
         .y = y,
         .size = size,
-        .health = 100,
+        .health = health,
         .ammo = 25,
         .hitbox = {0}};
     return player;

@@ -11,5 +11,5 @@ typedef struct
     Hitbox hitbox;
 } Player;
 
-Player spawnPlayer(int x, int y, int size);
+Player spawnPlayer(int x, int y, int size, int health);
 void updatePlayerHitbox(Player* player);
