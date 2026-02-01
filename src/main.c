@@ -1,3 +1,4 @@
+#include <SDL2/SDL_render.h>
 #define SDL_MAIN_HANDLED
 
 #include "config.h"
@@ -16,9 +17,9 @@
 int main()
 {
     SDL_Window* window;
-    SDL_Surface* surface;
+    SDL_Renderer* renderer;
 
-    if (!initSDL(&window, &surface))
+    if (!initSDL(&window, &renderer))
         return 1;
 
     Player player;
@@ -34,11 +35,10 @@ int main()
     {
         handeEvents(&running, &player, &entities, &projectiles);
         updateGame(&player, &entities, &projectiles);
-        renderGame(surface, window, &player, &entities, &projectiles);
+        renderGame(renderer, &player, &entities, &projectiles);
         SDL_Delay((int) frameDelay);
     }
 
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    shutdownSDL(window, renderer);
     return 0;
 }

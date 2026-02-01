@@ -1,30 +1,34 @@
 #include "render.h"
 #include "config.h"
+#include <SDL2/SDL_render.h>
 
-void renderGame(SDL_Surface* surface, SDL_Window* window, Player* player, EntityArray* entities, ProjectileArray* projectiles)
+void renderGame(SDL_Renderer* renderer, Player* player, EntityArray* entities, ProjectileArray* projectiles)
 {
-    SDL_Rect bg = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-    SDL_FillRect(surface, &bg, BACKGROUND_COLOR);
+    SDL_SetRenderDrawColor(renderer, BACKGROUND_COLOR, 255);
+    SDL_RenderClear(renderer);
 
-    drawEntities(surface, entities->data, entities->count);
-    drawProjectiles(surface, projectiles->data, projectiles->count);
-    drawPlayer(surface, *player);
+    drawEntities(renderer, entities->data, entities->count);
+    drawProjectiles(renderer, projectiles->data, projectiles->count);
+    drawPlayer(renderer, *player);
 
-    SDL_UpdateWindowSurface(window);
+    SDL_RenderPresent(renderer);
 }
 
-void drawPlayer(SDL_Surface* surface, Player player)
+void drawPlayer(SDL_Renderer* renderer, Player player)
 {
     SDL_Rect playerRect = {
         (int) (player.x - player.size / 2.0f),
         (int) (player.y - player.size / 2.0f),
         player.size,
         player.size};
-    SDL_FillRect(surface, &playerRect, 0x000000ff);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+    SDL_RenderFillRect(renderer, &playerRect);
 }
 
-void drawEntities(SDL_Surface* surface, Entity* entities, int entityCount)
+void drawEntities(SDL_Renderer* renderer, Entity* entities, int entityCount)
 {
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+
     for (int i = 0; i < entityCount; i++)
     {
         SDL_Rect entityRect = {
@@ -32,12 +36,14 @@ void drawEntities(SDL_Surface* surface, Entity* entities, int entityCount)
             (int) (entities[i].y - entities[i].size / 2.0f),
             entities[i].size,
             entities[i].size};
-        SDL_FillRect(surface, &entityRect, 0x00ff0000);
+        SDL_RenderFillRect(renderer, &entityRect);
     }
 }
 
-void drawProjectiles(SDL_Surface* surface, Projectile* projectiles, int projectileCount)
+void drawProjectiles(SDL_Renderer* renderer, Projectile* projectiles, int projectileCount)
 {
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+
     for (int i = 0; i < projectileCount; i++)
     {
         SDL_Rect projectileRect = {
@@ -45,6 +51,6 @@ void drawProjectiles(SDL_Surface* surface, Projectile* projectiles, int projecti
             (int) (projectiles[i].y - projectiles[i].size / 2.0f),
             projectiles[i].size,
             projectiles[i].size};
-        SDL_FillRect(surface, &projectileRect, 0x0000ff00);
+        SDL_RenderFillRect(renderer, &projectileRect);
     }
 }
