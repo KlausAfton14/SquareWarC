@@ -3,15 +3,13 @@ BIN_DIR = bin
 
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99 -Iinclude
-LDFLAGS = -lSDL2 -lm
+LDFLAGS = -lSDL2 -lSDL2_image -lm
 
 BIN = $(BIN_DIR)/gierka
 
 WIN_CC = x86_64-w64-mingw32-gcc
-WIN_CFLAGS = -Wall -Wextra -std=c99 -Iinclude \
-             -I/usr/x86_64-w64-mingw32/include
-WIN_LDFLAGS = -L/usr/x86_64-w64-mingw32/lib \
-              -lSDL2 -lm
+WIN_CFLAGS = -Wall -Wextra -std=c99 -Iinclude -I/usr/x86_64-w64-mingw32/include
+WIN_LDFLAGS = -L/usr/x86_64-w64-mingw32/lib -lSDL2 -lSDL2_image -lm
 
 WIN_BIN = $(BIN_DIR)/SquareWar.exe
 

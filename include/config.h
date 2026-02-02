@@ -1,9 +1,8 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#pragma once
 
 #define WINDOW_TITLE "SquareWar"
-#define WINDOW_WIDTH 1200
-#define WINDOW_HEIGHT 800
+#define WINDOW_WIDTH 1920
+#define WINDOW_HEIGHT 1080
 
 #define TARGET_FPS 60
 #define BACKGROUND_COLOR 20, 20, 20
@@ -11,6 +10,5 @@
 #define DEAFULT_PLAYER_HEALTH 1000
 #define DEAFULT_ENTITY_HEALTH 150
 #define DEAFULT_PROJECTILE_DAMAGE 50
-#define PLAYER_STEP 3
-
-#endif
+#define PLAYER_STEP 4
+#define ENTITY_SPEED 60.0f

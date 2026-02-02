@@ -9,7 +9,10 @@ typedef struct
     float y;
     int size;
     int health;
+    int damage;
     Hitbox hitbox;
+
+    float attackCooldown;
 } Entity;
 
 typedef struct
@@ -20,7 +23,7 @@ typedef struct
 } EntityArray;
 
 void initEntities(EntityArray* arr);
-Entity spawnEntity(int x, int y, int size, int health);
+Entity spawnEntity(int x, int y, int size, int health, int damage);
 void addEntity(EntityArray* arr, Entity e);
 void removeEntity(EntityArray* arr, size_t index); // Removes entity by swapping with last element (order not preserved)
 void updateEntityHitbox(Entity* entity);

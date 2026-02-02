@@ -36,7 +36,7 @@ void handeEvents(bool* running, Player* player, EntityArray* entities, Projectil
 
             if (event.button.button == SDL_BUTTON_LEFT)
             {
-                Entity entity = spawnEntity(mouseX, mouseY, 40, DEAFULT_ENTITY_HEALTH);
+                Entity entity = spawnEntity(mouseX, mouseY, 40, DEAFULT_ENTITY_HEALTH, 20);
                 updateEntityHitbox(&entity);
                 addEntity(entities, entity);
             }

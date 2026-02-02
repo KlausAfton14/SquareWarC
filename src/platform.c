@@ -2,6 +2,7 @@
 #include "config.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_render.h>
+#include <SDL2/SDL_video.h>
 
 bool initSDL(SDL_Window** window, SDL_Renderer** renderer)
 {
@@ -14,7 +15,7 @@ bool initSDL(SDL_Window** window, SDL_Renderer** renderer)
         SDL_WINDOWPOS_CENTERED,
         WINDOW_WIDTH,
         WINDOW_HEIGHT,
-        0);
+        SDL_WINDOW_FULLSCREEN);
 
     if (!*window)
         return false;

@@ -18,7 +18,7 @@ Projectile spawnProjectile(Player player, int size, int damage, int targetX, int
     if (length == 0)
         length = 1;
 
-    float speed = 5.0f;
+    float speed = 7.0f;
 
     Projectile projectile = {
         .x = player.x,

@@ -7,14 +7,16 @@ void initEntities(EntityArray* arr)
     arr->capacity = 0;
 }
 
-Entity spawnEntity(int x, int y, int size, int health)
+Entity spawnEntity(int x, int y, int size, int health, int damage)
 {
     Entity entity = {
         .x = x,
         .y = y,
         .size = size,
         .health = health,
-        .hitbox = {0}};
+        .damage = damage,
+        .hitbox = {0},
+        .attackCooldown = 0.0f};
     return entity;
 }
 
